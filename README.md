@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="https://github.com/jcubic/wayne/blob/master/.github/assets/logo.svg?raw=true"
+  <img src="https://raw.githubusercontent.com/jcubic/velvet/master/.github/assets/Logo.svg"
        alt="Logo of Velvet library - it represents a Yellow Banana and Text Velvet with the name of the library" />
 </h1>
 
