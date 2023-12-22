@@ -16,6 +16,24 @@ nonce.
 The code is not yet public and it's in experimental stage. But the proof of concept
 is working.
 
+## TODO
+- [x] Reserve npm name
+- [ ] Write the code according to API
+- [ ] Write unit tests using Jest
+- [ ] Use TypeScript
+- [ ] Make ESM, CJS, UDM libraries
+- [ ] Build when publish with package.json
+- [ ] Create Live Demo [CodePen]
+- [ ] Add blog post about the story and about the logo origin
+- [ ] GitHub actions
+  - [ ] Build
+  - [ ] Coveralls
+
+## Potential problems
+* Making the value use `toString()` make break types since strings are not objects
+  you may not be able to use `styles.header` implicit string conversion and
+  `styles.header.inject();`
+
 ## Installation
 
 ```
