@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Velvet Demo</title>
+    <meta name="Description" content="Demo of Velvet Vanilla JavaScript library"/>
+    <!--[if IE]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script nonce="2726c7f26c" src="https://cdn.jsdelivr.net/npm/velvet-style"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy"
+          content="script-src code.jquery.com 'nonce-2726c7f26c'; style-src 'nonce-2726c7f26c'" />
+</head>
+<body>
+
+<script nonce="2726c7f26c">
+ const debug = true;
+ const nonce = '2726c7f26c';
+
+ const styles = velvet.StyleSheet.create({
+     A: {
+         color: 'red'
+     },
+     B: {
+         color: 'darkblue'
+     }
+ });
+
+ function tag(name, class_name, text) {
+     const p = document.createElement(name);
+     p.innerText = text;
+     p.classList.add(class_name);
+     return p;
+ }
+
+ function create_p(class_name, text) {
+     const p = tag('p', class_name, text);
+
+     velvet.inject(class_name, { nonce, debug });
+     document.body.appendChild(p);
+ }
+
+ create_p(styles.A, 'Hello');
+ create_p(styles.B, 'World');
+
+ const class_name = velvet.style({
+     background: 'black',
+     color: '#ccc',
+     fontFamily: 'monospace'
+ });
+
+ create_p(class_name, 'Hello World');
+</script>
+</body>
+</html>
