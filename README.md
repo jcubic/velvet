@@ -18,10 +18,10 @@ is working.
 
 ## TODO
 - [x] Reserve npm name
-- [ ] Write the code according to API
+- [x] Write the code according to API
 - [ ] Write unit tests using Jest
-- [ ] Use TypeScript
-- [ ] Make ESM, CJS, UDM libraries
+- [x] Use TypeScript
+- [x] Make ESM, CJS, UDM libraries
 - [ ] Build when publish with package.json
 - [ ] Create Live Demo [CodePen]
 - [ ] Add blog post about the story and about the logo origin
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
 
 const Header = ({title}) => {
   useEffect(() => {
-     return inject(styles.header, nonce);
+     return inject(styles.header, { nonce });
   }, []);
 
   return (
@@ -72,13 +72,41 @@ const Button = ({color, title}) => {
    const className = useRef();
    useEffect(() => {
       className.current = style({ color });
-      return inject(className.current, nonce);
+      return inject(className.current, { nonce });
    }, [color]);
 
    return (
      <button className={className.current}>{title}</button>
    );
 };
+```
+
+Usage with Vanilla JavaScript
+
+```javascript
+const debug = true;
+
+const nonce = '2726c7f26c';
+
+const styles = velvet.StyleSheet.create({
+    A: {
+        color: 'red'
+    },
+    B: {
+        color: 'darkblue'
+    }
+});
+
+function create_p(class_name, text) {
+    const p = document.createElement('p');
+    p.innerText = text;
+    p.classList.add(class_name);
+    velvet.inject(class_name, { nonce, debug });
+    document.body.appendChild(p);
+}
+
+create_p(styles.A, 'Hello');
+create_p(styles.B, 'World');
 ```
 
 ## License
