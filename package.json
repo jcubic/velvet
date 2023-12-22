@@ -3,10 +3,13 @@
   "version": "0.1.1",
   "description": "Vanilla JavaScript Universal CSS in JS library",
   "type": "module",
-  "main": "dist/main.js",
-  "module": "dist/module.js",
-  "types": "dist/types.d.ts",
-  "source": "src/velvet.ts",
+  "main": "index.js",
+  "module": "index.mjs",
+  "exports": {
+    "import": "index.mjs",
+    "require": "index.cjs"
+  },
+  "types": "index.d.ts"
   "scripts": {
     "test": "jest --coverage",
     "build": "rimraf build rimraf index.* dist && tsc && rollup --config",

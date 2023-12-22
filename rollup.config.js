@@ -5,19 +5,30 @@ export default [
     input: 'build/velvet.js',
     output: {
       file: 'index.js',
-      format: 'iife',
+      format: 'umd',
       compact: true,
       name: 'velvet'
     }
-  }, {
+  },
+  {
     input: 'build/velvet.js',
     output: {
-      file: 'index.cjs.js',
+      file: 'index.cjs',
       format: 'cjs',
       sourcemap: true,
       exports: 'named'
     }
-  }, {
+  },
+  {
+    input: 'build/velvet.js',
+    output: {
+      file: 'index.mjs',
+      format: 'es',
+      sourcemap: true,
+      exports: 'named'
+    }
+  },
+  {
     input: 'src/velvet.ts',
     plugins: [dts()],
     output: {
