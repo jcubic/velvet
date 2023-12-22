@@ -81,9 +81,10 @@ const Button = ({color, title}) => {
 };
 ```
 
-Usage with Vanilla JavaScript
+Usage in browser with Vanilla JavaScript
 
 ```javascript
+// debug will show the nonce and the CSS inside style tag in devtools
 const debug = true;
 
 const nonce = '2726c7f26c';
@@ -107,6 +108,15 @@ function create_p(class_name, text) {
 
 create_p(styles.A, 'Hello');
 create_p(styles.B, 'World');
+
+const class_name = velvet.style({
+    background: 'black',
+    color: '#ccc',
+    fontFamily: 'monospace'
+});
+
+create_p(class_name, 'Hello World');
+
 ```
 
 ## License

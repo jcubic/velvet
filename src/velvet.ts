@@ -53,21 +53,27 @@ const dump_css = (sheet: CSSStyleSheet) => {
     return [...sheet.cssRules].map(rule => rule.cssText).join('\n')
 };
 
+
+export const style = (style: Style) => {
+    const repr = JSON.stringify(style);
+    const class_name: ClassName = `velvet-${hash(repr)}`;
+    if (cache.has(class_name)) {
+        const obj = cache.get(class_name)!;
+        obj.ref++;
+    } else {
+        cache.set(class_name, {
+            ref: 0,
+            index: null,
+            style,
+        } as MapNode);
+    }
+    return class_name;
+};
+
 export const StyleSheet = {
     create<T>(input: StyleSheet<T>): ClassMapping<T> {
-        const pairs: Array<[T, ClassName]> = Object.entries(input).map(([name, style]) => {
-            const repr = JSON.stringify(style);
-            const class_name: ClassName = `velvet-${hash(repr)}`;
-            if (cache.has(class_name)) {
-                const obj = cache.get(class_name)!;
-                obj.ref++;
-            } else {
-                cache.set(class_name, {
-                    ref: 0,
-                    index: null,
-                    style,
-                } as MapNode);
-            }
+        const pairs: Array<[T, ClassName]> = Object.entries(input).map(([name, _style]) => {
+            const class_name = style(_style as Style);
             return [name, class_name] as [T, ClassName];
         });
         return Object.fromEntries(pairs);
