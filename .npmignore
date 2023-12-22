@@ -1,1 +1,7 @@
 .github
+src
+build
+coverage
+__tests__
+*config*
+

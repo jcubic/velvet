@@ -4,7 +4,9 @@
        alt="Logo of Velvet library - it represents a Yellow Banana and Text Velvet with the name of the library" />
 </h1>
 
-Vanilla JavaScript Universal CSS in JS library
+[![npm](https://img.shields.io/badge/npm-0.1.2-blue.svg)](https://www.npmjs.com/package/velvet-style)
+
+[Simple Vanilla JavaScript Universal CSS in JS library](https://github.com/jcubic/velvet/)
 
 Similar to [Facebook styleX](https://stylexjs.com/) but it's not a compiler only
 library that executes at runtime.  It's also library agnostic. Inspired by React Native
@@ -22,7 +24,7 @@ is working.
 - [ ] Write unit tests using Jest
 - [x] Use TypeScript
 - [x] Make ESM, CJS, UDM libraries
-- [ ] Build when publish with package.json
+- [x] Build when publish with package.json
 - [ ] Create Live Demo [CodePen]
 - [ ] Add blog post about the story and about the logo origin
 - [ ] GitHub actions
