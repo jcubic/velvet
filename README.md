@@ -6,9 +6,15 @@
 
 Vanilla JavaScript Universal CSS in JS library
 
-Similar to Facebook styleX but run it's not a compiler only library that runs at runtime.
-It's also library agnostic. Inspired by React Native StyleSheet API and compatible with
-strict CSP (Content Security Policy) and nonce.
+Similar to [Facebook styleX](https://stylexjs.com/) but run it's not a compiler only
+library that runs at runtime.  It's also library agnostic. Inspired by React Native
+[StyleSheet API](https://reactnative.dev/docs/stylesheet) and compatible with strict *CSP*
+([Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)) and
+nonce.
+
+**NOTE**: This library is a placeholder. The code below is how the API will look like.
+The code is not yet public and it's in experimental stage. But the proof of concept
+is working.
 
 ## Installation
 
