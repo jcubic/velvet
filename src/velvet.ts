@@ -6,8 +6,6 @@
  */
 import hash from './crc32';
 
-const __DEBUG__ = false;
-
 type Style = Partial<CSSStyleDeclaration>;
 
 type StyleSheet<T> = {
@@ -20,13 +18,16 @@ type ClassMapping<T> = {
     readonly [key in keyof T]: ClassName
 };
 
-// The hash of the CSS in form of a class is keep as key, each time when we call inject
-// we increase the ref number and when destroy is called (fuction return from inject)
-// the ref is decreased when ref reach zero, the style is Removed from DOM
-const cache = new Map<ClassName, {ref: number, $style: HTMLStyleElement}>();
+interface MapNode {
+    ref: number;
+    index: number | null;
+    style: Style;
+};
 
 const make_style = () => {
-    return document.createElement('style');
+    const node = document.createElement('style');
+    node.classList.add('velvet');
+    return node;
 };
 
 const empty_rule = (sheet: CSSStyleSheet, class_name: string) => {
@@ -61,44 +62,63 @@ export const StyleSheet = {
                 const obj = cache.get(class_name)!;
                 obj.ref++;
             } else {
-                const $style = make_style();
-                const { sheet } = $style;
-                set_css(sheet!, class_name, style as Style);
-                if (__DEBUG__) {
-                    // by default dynamic style is not visible in devtools
-                    $style.innerText = dump_css(sheet!);
-                }
                 cache.set(class_name, {
-                    ref: 1,
-                    $style
-                });
+                    ref: 0,
+                    index: null,
+                    style,
+                } as MapNode);
             }
-            return [name as T, class_name as ClassName];
+            return [name, class_name] as [T, ClassName];
         });
         return Object.fromEntries(pairs);
     }
 };
 
-export const inject = (class_name: ClassName, nonce?: string) => {
+interface Options {
+    nonce?: string;
+    debug?: true;
+};
+
+const inject_style = ({ nonce, debug }: Options) => {
+    if (nonce) {
+        // allow to use strict CSP (Content Security Policy)
+        $style.nonce = nonce;
+        if (debug) {
+            $style.setAttribute('nonce', nonce);
+        }
+    }
+    document.head.appendChild($style);
+    injected = true;
+};
+
+export const inject = (class_name: ClassName, { nonce, debug }: Options) => {
     if (!cache.has(class_name)) {
         throw new Error(`velvet: style with class ${class_name} not found`);
     }
     const obj = cache.get(class_name)!;
-    obj.ref++
-    if (nonce) {
-        // allow to use strict CSP (Content Security Policy)
-        obj.$style.nonce = nonce;
+    if (!injected) {
+        inject_style({ nonce, debug });
     }
-    document.head.appendChild(obj.$style);
+    const { sheet } = $style;
+    set_css(sheet!, class_name, obj.style);
+    obj.index = sheet!.cssRules.length
+    if (debug) {
+        // by default dynamic style is not visible in devtools
+        $style.innerHTML = dump_css(sheet!);
+    }
+    ++obj.ref;
     return (purge?: true) => {
         if (cache.has(class_name)) {
             const obj = cache.get(class_name)!;
             obj.ref--;
-            // no more references we can remove the style from DOM
             if (obj.ref <= 0) {
-                obj.$style.remove();
+                if (obj.index !== null) {
+                    const { sheet } = $style;
+                    sheet!.deleteRule(obj.index);
+                }
                 if (purge) {
-                    // when user decide he can also remove the style object
+                    // when user decide he can remove the style object
+                    // this is safe when there are no more references
                     // this is usesfull when the style will never be reused
                     cache.delete(class_name);
                 }
@@ -107,3 +127,11 @@ export const inject = (class_name: ClassName, nonce?: string) => {
     };
 };
 
+// The hash of the CSS in form of a class is keep as key, each time when we call inject
+// we increase the ref number and when destroy is called (fuction return from inject)
+// the ref is decreased when ref reach zero, the style is Removed from DOM
+const cache = new Map<ClassName, MapNode>();
+
+let injected = false;
+
+const $style: HTMLStyleElement = make_style();
