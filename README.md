@@ -4,7 +4,7 @@
        alt="Logo of Velvet library - it represents a Yellow Banana and Text Velvet with the name of the library" />
 </h1>
 
-[![npm](https://img.shields.io/badge/npm-0.1.2-blue.svg)](https://www.npmjs.com/package/velvet-style)
+[![npm](https://img.shields.io/badge/npm-0.1.3-blue.svg)](https://www.npmjs.com/package/velvet-style)
 
 [Simple Vanilla JavaScript Universal CSS in JS library](https://github.com/jcubic/velvet/)
 
