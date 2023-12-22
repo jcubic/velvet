@@ -14,22 +14,7 @@ library that executes at runtime.  It's also library agnostic. Inspired by React
 ([Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)) and
 nonce.
 
-**NOTE**: This library is a placeholder. The code below is how the API will look like.
-The code is not yet public and it's in experimental stage. But the proof of concept
-is working.
-
-## TODO
-- [x] Reserve npm name
-- [x] Write the code according to API
-- [ ] Write unit tests using Jest
-- [x] Use TypeScript
-- [x] Make ESM, CJS, UDM libraries
-- [x] Build when publish with package.json
-- [ ] Create Live Demo [CodePen]
-- [ ] Add blog post about the story and about the logo origin
-- [ ] GitHub actions
-  - [ ] Build
-  - [ ] Coveralls
+[Live Demo](https://jcubic.github.io/velvet/)
 
 ## Installation
 
@@ -120,6 +105,19 @@ const class_name = velvet.style({
 create_p(class_name, 'Hello World');
 
 ```
+
+## TODO
+- [x] Reserve npm name
+- [x] Write the code according to API
+- [ ] Write unit tests using Jest
+- [x] Use TypeScript
+- [x] Make ESM, CJS, UDM libraries
+- [x] Build when publish with package.json
+- [x] Create Live Demo
+- [ ] Add blog post about the story and about the logo origin
+- [ ] GitHub actions
+  - [ ] Build
+  - [ ] Coveralls
 
 ## License
 
