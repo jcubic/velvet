@@ -1,0 +1,10 @@
+{
+  "name": "velvet-style",
+  "version": "0.1.1",
+  "description": "Vanilla JavaScript Universal CSS in JS library",
+  "main": "index.js",
+  "scripts": { },
+  "keywords": ["css", "css-in-js", "style"],
+  "author": "Jakub T. Jankiewicz <jcubic@onet.pl> (https://jcubic.pl/me/)",
+  "license": "MIT"
+}
