@@ -37,9 +37,10 @@ npm install velvet-style
 
 ## Usage
 
-Using with ReactJS and static stylesheet:
+Using ReactJS and static stylesheet:
 
 ```javascript
+import { useEffect } from 'react';
 import { Stylesheet, inject } from 'velvet-style';
 
 const styles = StyleSheet.create({
@@ -64,6 +65,7 @@ const Header = ({title}) => {
 With dynamic style:
 
 ```javascript
+import { useEffect } from 'react';
 import { style, inject } from 'velvet-style';
 
 const Button = ({color, title}) => {
