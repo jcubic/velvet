@@ -6,8 +6,8 @@
 
 Vanilla JavaScript Universal CSS in JS library
 
-Similar to [Facebook styleX](https://stylexjs.com/) but run it's not a compiler only
-library that runs at runtime.  It's also library agnostic. Inspired by React Native
+Similar to [Facebook styleX](https://stylexjs.com/) but it's not a compiler only
+library that executes at runtime.  It's also library agnostic. Inspired by React Native
 [StyleSheet API](https://reactnative.dev/docs/stylesheet) and compatible with strict *CSP*
 ([Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)) and
 nonce.
