@@ -5,7 +5,12 @@ const config: Config.InitialOptions = {
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {'rootDir': '.'}]
   },
-  'testEnvironment': 'jsdom'
+  'testEnvironment': 'jsdom',
+  'moduleFileExtensions': [
+    'ts',
+    'js',
+    'json'
+  ]
 };
 
 export default config;

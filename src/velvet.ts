@@ -6,7 +6,9 @@
  */
 import hash from './crc32';
 
-type Style = Partial<CSSStyleDeclaration>;
+type Style = Partial<CSSStyleDeclaration> & {
+    [key: `--${string}`]: string | number;
+};
 
 type StyleSheet<T> = {
     readonly [key in keyof T]: Style
@@ -34,7 +36,7 @@ const empty_rule = (sheet: CSSStyleSheet, class_name: string) => {
     const index = sheet.cssRules.length;
     sheet.insertRule(`.${class_name} { }`, index);
     return sheet.cssRules[index];
-}
+};
 
 const set_css = (sheet: CSSStyleSheet, class_name: string, style: Style) => {
     const selector = `.${class_name}`;
@@ -45,22 +47,22 @@ const set_css = (sheet: CSSStyleSheet, class_name: string, style: Style) => {
         rule = empty_rule(sheet, class_name);
     }
     if (rule instanceof CSSStyleRule) {
-        Object.assign(rule.style, style);
+        const style_rule = rule.style;
+        Object.entries(style).forEach(([prop, value]) => {
+            style_rule.setProperty(prop, value as any);
+        });
     }
 };
 
 const dump_css = (sheet: CSSStyleSheet) => {
-    return [...sheet.cssRules].map(rule => rule.cssText).join('\n')
+    $style.innerHTML = [...sheet.cssRules].map(rule => rule.cssText).join('\n');
 };
 
 
 export const style = (style: Style) => {
     const repr = JSON.stringify(style);
     const class_name: ClassName = `velvet-${hash(repr)}`;
-    if (cache.has(class_name)) {
-        const obj = cache.get(class_name)!;
-        obj.ref++;
-    } else {
+    if (!cache.has(class_name)) {
         cache.set(class_name, {
             ref: 0,
             index: null,
@@ -97,7 +99,7 @@ const inject_style = ({ nonce, debug }: Options) => {
     injected = true;
 };
 
-export const inject = (class_name: ClassName, { nonce, debug }: Options) => {
+export const inject = (class_name: ClassName, { nonce, debug }: Options = {}) => {
     if (!cache.has(class_name)) {
         throw new Error(`velvet: style with class ${class_name} not found`);
     }
@@ -107,10 +109,10 @@ export const inject = (class_name: ClassName, { nonce, debug }: Options) => {
     }
     const { sheet } = $style;
     set_css(sheet!, class_name, obj.style);
-    obj.index = sheet!.cssRules.length
+    obj.index = sheet!.cssRules.length - 1;
     if (debug) {
         // by default dynamic style is not visible in devtools
-        $style.innerHTML = dump_css(sheet!);
+        dump_css(sheet!);
     }
     ++obj.ref;
     return (purge?: true) => {
@@ -121,6 +123,9 @@ export const inject = (class_name: ClassName, { nonce, debug }: Options) => {
                 if (obj.index !== null) {
                     const { sheet } = $style;
                     sheet!.deleteRule(obj.index);
+                    if (debug) {
+                        dump_css(sheet!);
+                    }
                 }
                 if (purge) {
                     // when user decide he can remove the style object
