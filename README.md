@@ -29,11 +29,6 @@ is working.
   - [ ] Build
   - [ ] Coveralls
 
-## Potential problems
-* Making the value use `toString()` make break types since strings are not objects
-  you may not be able to use `styles.header` implicit string conversion and
-  `styles.header.inject();`
-
 ## Installation
 
 ```
@@ -45,7 +40,7 @@ npm install velvet-style
 Using with ReactJS and static stylesheet:
 
 ```javascript
-import { Stylesheet } from 'velvet-style';
+import { Stylesheet, inject } from 'velvet-style';
 
 const styles = StyleSheet.create({
     header: {
@@ -55,7 +50,7 @@ const styles = StyleSheet.create({
 
 const Header = ({title}) => {
   useEffect(() => {
-     return styles.header.inject(nonce);
+     return inject(styles.header, nonce);
   }, []);
 
   return (
@@ -69,13 +64,13 @@ const Header = ({title}) => {
 With dynamic style:
 
 ```javascript
-import { style } from 'velvet-style';
+import { style, inject } from 'velvet-style';
 
 const Button = ({color, title}) => {
    const className = useRef();
    useEffect(() => {
       className.current = style({ color });
-      return className.current.inject(nonce);
+      return inject(className.current, nonce);
    }, [color]);
 
    return (
