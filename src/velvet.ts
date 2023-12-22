@@ -1,3 +1,9 @@
+/*
+ * Velvet <https://github.com/jcubic/velvet/>
+ *
+ * Copyright (c) 2023 Jakub T. Jankiewicz <jcubic@onet.pl>
+ * Released under MIT license
+ */
 import hash from './crc32';
 
 const __DEBUG__ = false;

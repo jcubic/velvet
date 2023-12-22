@@ -1,3 +1,10 @@
+/*
+ * Velvet <https://github.com/jcubic/velvet/>
+ *
+ * Copyright (c) 2023 Jakub T. Jankiewicz <jcubic@onet.pl>
+ * Released under MIT license
+ */
+
 // based on https://stackoverflow.com/a/18639999/387194
 const make_crc_table = () => {
     let c: number;
