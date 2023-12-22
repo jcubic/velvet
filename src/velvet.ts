@@ -46,7 +46,7 @@ const dump_css = (sheet: CSSStyleSheet) => {
     return [...sheet.cssRules].map(rule => rule.cssText).join('\n')
 };
 
-const StyleSheet = {
+export const StyleSheet = {
     create<T>(input: StyleSheet<T>): ClassMapping<T> {
         const pairs: Array<[T, ClassName]> = Object.entries(input).map(([name, style]) => {
             const repr = JSON.stringify(style);
