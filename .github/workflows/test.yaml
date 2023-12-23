@@ -22,7 +22,7 @@ jobs:
           node-version: '16'
       - run: npm ci
       - run: npm run ts:check
-      - run: npm run test
+      - run: npm build
       - run: npm test
       - name: Coveralls
         uses: coverallsapp/github-action@master
