@@ -21,6 +21,14 @@
     "css-in-js",
     "style"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jcubic/velvet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jcubic/velvet/issues"
+  },
+  "homepage": "https://github.com/jcubic/velvet#readme",
   "author": "Jakub T. Jankiewicz <jcubic@onet.pl> (https://jcubic.pl/me/)",
   "license": "MIT",
   "devDependencies": {
