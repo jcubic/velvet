@@ -1,6 +1,6 @@
 {
   "name": "velvet-style",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Simple Vanilla JavaScript Universal CSS in JS library",
   "type": "module",
   "main": "index.js",
