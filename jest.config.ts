@@ -6,6 +6,7 @@ const config: Config.InitialOptions = {
     '^.+\\.tsx?$': ['ts-jest', {'rootDir': '.'}]
   },
   'testEnvironment': 'jsdom',
+  'testRegex': '/__tests__/.*|\\.spec\\.ts?$',
   'moduleFileExtensions': [
     'ts',
     'js',

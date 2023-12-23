@@ -22,7 +22,6 @@ type ClassMapping<T> = {
 
 interface MapNode {
     ref: number;
-    index: number | null;
     style: Style;
 };
 
@@ -38,6 +37,12 @@ const empty_rule = (sheet: CSSStyleSheet, class_name: string) => {
     return sheet.cssRules[index];
 };
 
+const dash_name = (property: string) => {
+    return property.replace(/([A-Z])/g, (_, char) => {
+        return `-${char}`;
+    }).toLowerCase();
+}
+
 const set_css = (sheet: CSSStyleSheet, class_name: string, style: Style) => {
     const selector = `.${class_name}`;
     let rule = [...sheet.cssRules].find(rule => {
@@ -45,12 +50,22 @@ const set_css = (sheet: CSSStyleSheet, class_name: string, style: Style) => {
     });
     if (!rule) {
         rule = empty_rule(sheet, class_name);
+        if (rule instanceof CSSStyleRule) {
+            const style_rule = rule.style;
+            Object.entries(style).forEach(([prop, value]) => {
+                style_rule.setProperty(dash_name(prop), value as any);
+            });
+        }
     }
-    if (rule instanceof CSSStyleRule) {
-        const style_rule = rule.style;
-        Object.entries(style).forEach(([prop, value]) => {
-            style_rule.setProperty(prop, value as any);
-        });
+};
+
+const delete_rule = (sheet: CSSStyleSheet, class_name: string) => {
+    const selector = `.${class_name}`;
+    let index = [...sheet.cssRules].findIndex(rule => {
+        return rule instanceof CSSStyleRule && rule.selectorText === selector;
+    });
+    if (index !== -1) {
+        sheet.deleteRule(index);
     }
 };
 
@@ -65,7 +80,6 @@ export const style = (style: Style) => {
     if (!cache.has(class_name)) {
         cache.set(class_name, {
             ref: 0,
-            index: null,
             style,
         } as MapNode);
     }
@@ -95,7 +109,9 @@ const inject_style = ({ nonce, debug }: Options) => {
             $style.setAttribute('nonce', nonce);
         }
     }
-    document.head.appendChild($style);
+    if (!injected) {
+        document.head.appendChild($style);
+    }
     injected = true;
 };
 
@@ -104,12 +120,9 @@ export const inject = (class_name: ClassName, { nonce, debug }: Options = {}) =>
         throw new Error(`velvet: style with class ${class_name} not found`);
     }
     const obj = cache.get(class_name)!;
-    if (!injected) {
-        inject_style({ nonce, debug });
-    }
+    inject_style({ nonce, debug });
     const { sheet } = $style;
     set_css(sheet!, class_name, obj.style);
-    obj.index = sheet!.cssRules.length - 1;
     if (debug) {
         // by default dynamic style is not visible in devtools
         dump_css(sheet!);
@@ -120,12 +133,10 @@ export const inject = (class_name: ClassName, { nonce, debug }: Options = {}) =>
             const obj = cache.get(class_name)!;
             obj.ref--;
             if (obj.ref <= 0) {
-                if (obj.index !== null) {
-                    const { sheet } = $style;
-                    sheet!.deleteRule(obj.index);
-                    if (debug) {
-                        dump_css(sheet!);
-                    }
+                const { sheet } = $style;
+                delete_rule(sheet!, class_name);
+                if (debug) {
+                    dump_css(sheet!);
                 }
                 if (purge) {
                     // when user decide he can remove the style object
