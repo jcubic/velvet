@@ -4,4 +4,4 @@ build
 coverage
 __tests__
 *config*
-
+.gitattributes
