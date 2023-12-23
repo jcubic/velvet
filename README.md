@@ -108,19 +108,6 @@ create_p(class_name, 'Hello World');
 
 ```
 
-## TODO
-- [x] Reserve npm name
-- [x] Write the code according to API
-- [ ] Write unit tests using Jest
-- [x] Use TypeScript
-- [x] Make ESM, CJS, UDM libraries
-- [x] Build when publish with package.json
-- [x] Create Live Demo
-- [ ] Add blog post about the story and about the logo origin
-- [ ] GitHub actions
-  - [ ] Build
-  - [ ] Coveralls
-
 ## License
 
 Released with [MIT](http://opensource.org/licenses/MIT) license<br/>
