@@ -1,6 +1,6 @@
 import { StyleSheet, inject, style } from '../velvet';
 
-describe('StyleSheet', () => {
+describe('Style injection', () => {
     let injections: Array<(purge?: true) => void>;
     beforeEach(() => {
         injections = [];
@@ -87,6 +87,15 @@ describe('StyleSheet', () => {
         const $style = document.head.querySelector('style');
         test_style($style!, new RegExp(`^.${class_name} \\{color: red; background: black;\\}$`));
         expect($style!.nonce).toEqual(nonce);
+    });
+    it('should create CSS Variables', () => {
+        const class_name = style({
+            '--color': 'red',
+            '--background': 'black'
+        });
+        injections.push(inject(class_name, { debug: true }));
+        const $style = document.head.querySelector('style');
+        test_style($style!, new RegExp(`^.${class_name} \\{--color: red; --background: black;\\}$`));
     });
     it('should create multiple styles', () => {
         const styles = StyleSheet.create({
