@@ -20,9 +20,15 @@ type ClassMapping<T> = {
     readonly [key in keyof T]: ClassName
 };
 
-interface MapNode {
+interface ShadowNode {
+    root: ShadowRoot;
+    style: HTMLStyleElement;
+}
+
+interface StyleMapNode {
     ref: number;
     style: Style;
+    shadow?: ShadowNode;
 };
 
 const make_style = () => {
@@ -43,6 +49,23 @@ const dash_name = (property: string) => {
     }).toLowerCase();
 }
 
+const append_sheet = (shadow: ShadowRoot, class_name: string, style: Style) => {
+    const extraSheet = new CSSStyleSheet();
+    const rule = empty_rule(extraSheet, class_name);
+    update_rule(rule, style);
+    shadow.adoptedStyleSheets.push(extraSheet);
+    return extraSheet;
+};
+
+const update_rule = (rule: CSSRule, style: Style) => {
+    if (rule instanceof CSSStyleRule) {
+        const style_rule = rule.style;
+        Object.entries(style).forEach(([prop, value]) => {
+            style_rule.setProperty(dash_name(prop), value as any);
+        });
+    }
+};
+
 const set_css = (sheet: CSSStyleSheet, class_name: string, style: Style) => {
     const selector = `.${class_name}`;
     let rule = [...sheet.cssRules].find(rule => {
@@ -50,12 +73,7 @@ const set_css = (sheet: CSSStyleSheet, class_name: string, style: Style) => {
     });
     if (!rule) {
         rule = empty_rule(sheet, class_name);
-        if (rule instanceof CSSStyleRule) {
-            const style_rule = rule.style;
-            Object.entries(style).forEach(([prop, value]) => {
-                style_rule.setProperty(dash_name(prop), value as any);
-            });
-        }
+        update_rule(rule, style);
     }
 };
 
@@ -81,7 +99,7 @@ export const style = (style: Style) => {
         cache.set(class_name, {
             ref: 0,
             style,
-        } as MapNode);
+        } as StyleMapNode);
     }
     return class_name;
 };
@@ -99,9 +117,10 @@ export const StyleSheet = {
 interface Options {
     nonce?: string;
     debug?: true;
+    target?: HTMLElement | ShadowRoot;
 };
 
-const inject_style = ({ nonce, debug }: Options) => {
+const inject_style = ({ nonce, debug, target = document.head }: Options) => {
     if (nonce) {
         // allow to use strict CSP (Content Security Policy)
         $style.nonce = nonce;
@@ -109,23 +128,34 @@ const inject_style = ({ nonce, debug }: Options) => {
             $style.setAttribute('nonce', nonce);
         }
     }
-    if (!injected) {
-        document.head.appendChild($style);
+    let style = target.querySelector('style.velvet');
+    if (target instanceof ShadowRoot) {
+        if (!style) {
+            style = make_style();
+            target.appendChild(style!);
+        }
+    } else if (!style) {
+        if (!$style) {
+            $style = make_style();
+        }
+        target.appendChild($style);
     }
-    injected = true;
+    return (style ?? $style) as HTMLStyleElement;
 };
 
-export const inject = (class_name: ClassName, { nonce, debug }: Options = {}) => {
+export const inject = (class_name: ClassName, { nonce, debug, target }: Options = {}) => {
     if (!cache.has(class_name)) {
         throw new Error(`velvet: style with class ${class_name} not found`);
     }
     const obj = cache.get(class_name)!;
-    inject_style({ nonce, debug });
-    const { sheet } = $style;
-    set_css(sheet!, class_name, obj.style);
-    if (debug) {
-        // by default dynamic style is not visible in devtools
-        dump_css(sheet!);
+    const $style = inject_style({ nonce, debug, target });
+    let { sheet } = $style;
+    if (sheet !== null) {
+        set_css(sheet!, class_name, obj.style);
+        if (debug) {
+            // by default dynamic style is not visible in devtools
+            dump_css(sheet!);
+        }
     }
     ++obj.ref;
     return (purge?: true) => {
@@ -134,7 +164,9 @@ export const inject = (class_name: ClassName, { nonce, debug }: Options = {}) =>
             obj.ref--;
             if (obj.ref <= 0) {
                 const { sheet } = $style;
-                delete_rule(sheet!, class_name);
+                if (sheet !== null) {
+                    delete_rule(sheet!, class_name);
+                }
                 if (debug) {
                     dump_css(sheet!);
                 }
@@ -152,8 +184,6 @@ export const inject = (class_name: ClassName, { nonce, debug }: Options = {}) =>
 // The hash of the CSS in form of a class is keep as key, each time when we call inject
 // we increase the ref number and when destroy is called (fuction return from inject)
 // the ref is decreased when ref reach zero, the style is Removed from DOM
-const cache = new Map<ClassName, MapNode>();
+const cache = new Map<ClassName, StyleMapNode>();
 
-let injected = false;
-
-const $style: HTMLStyleElement = make_style();
+let $style: HTMLStyleElement;

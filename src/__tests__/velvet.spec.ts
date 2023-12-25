@@ -1,5 +1,41 @@
 import { StyleSheet, inject, style } from '../velvet';
 
+function tag(name: string, class_name: string, text: string) {
+    const p = document.createElement(name);
+    p.innerText = text;
+    p.classList.add(class_name);
+    return p;
+}
+
+class HelloWorld extends HTMLElement {
+    name: string;
+    constructor() {
+        super();
+        this.name = 'World';
+    }
+
+    connectedCallback() {
+        const shadow = this.attachShadow({ mode: 'open' });
+        const class_name = style({
+            color: 'blue'
+        });
+        const p = tag('p', class_name, `Hello ${this.name}`);
+        shadow.appendChild(p);
+        inject(class_name, { debug: true, target: shadow });
+    }
+
+    attributeChangedCallback(this: any, property: string, oldValue: any, newValue: any) {
+        if (oldValue === newValue) return;
+        this[ property ] = newValue;
+    }
+
+    static get observedAttributes() {
+        return ['name'];
+    }
+}
+
+customElements.define('hello-world', HelloWorld);
+
 describe('Style injection', () => {
     let injections: Array<(purge?: true) => void>;
     beforeEach(() => {
@@ -123,5 +159,12 @@ describe('Style injection', () => {
                 `\\.${styles.text} \\{font-family: monospace; background: #000; color: #ccc;\\}$`,
             ].join('\\n')
         ));
+    });
+    it.failing('should inject inside web components', () => {
+        const hello = document.createElement('hello-world');
+        document.body.appendChild(hello);
+        // bug in jsDOM #3645
+        const $style = hello.shadowRoot?.querySelector('style')!;
+        test_style($style, /^\.velvet-[0-9a-f]+ \{color: blue;\}$/);
     });
 });
