@@ -108,6 +108,52 @@ create_p(class_name, 'Hello World');
 
 ```
 
+Usage with Web Components:
+
+```html
+<script>
+function tag(name, class_name, text) {
+  const p = document.createElement(name);
+  p.innerText = text;
+  p.classList.add(class_name);
+  return p;
+}
+
+class HelloWorld extends window.HTMLElement {
+  constructor() {
+    super();
+    this.name = 'World';
+    this.color = 'red';
+  }
+
+  connectedCallback() {
+    const shadow = this.attachShadow({ mode: 'open' });
+    const class_name = velvet.style({
+     color: this.color
+    });
+    const p = tag('p', class_name, `Hello ${this.name}`);
+    shadow.appendChild(p);
+    velvet.inject(class_name, { debug: true, target: shadow });
+  }
+
+  attributeChangedCallback(property, oldValue, newValue) {
+    if (oldValue === newValue) return;
+    this[ property ] = newValue;
+  }
+
+  static get observedAttributes() {
+    return ['name', 'color'];
+  }
+}
+
+window.customElements.define('hello-world', HelloWorld);
+const hello = document.createElement('hello-world');
+document.body.appendChild(hello);
+</script>
+
+<hello-world name="Velvet" color="blue"></hello-world>
+```
+
 ## License
 
 Released with [MIT](http://opensource.org/licenses/MIT) license<br/>
