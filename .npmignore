@@ -5,3 +5,4 @@ coverage
 __tests__
 *config*
 .gitattributes
+CHANGELOG.md
