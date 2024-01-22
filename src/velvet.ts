@@ -31,16 +31,9 @@ interface StyleMapNode {
     shadow?: ShadowNode;
 };
 
-const make_style = (nonce?: string, debug?: boolean) => {
+const make_style = () => {
     const node = document.createElement('style');
     node.classList.add('velvet');
-    if (nonce) {
-        // allow to use strict CSP (Content Security Policy)
-        node.nonce = nonce;
-        if (debug) {
-            node.setAttribute('nonce', nonce);
-        }
-    }
     return node;
 };
 
@@ -54,14 +47,6 @@ const dash_name = (property: string) => {
     return property.replace(/([A-Z])/g, (_, char) => {
         return `-${char}`;
     }).toLowerCase();
-}
-
-const append_sheet = (shadow: ShadowRoot, class_name: string, style: Style) => {
-    const extraSheet = new CSSStyleSheet();
-    const rule = empty_rule(extraSheet, class_name);
-    update_rule(rule, style);
-    shadow.adoptedStyleSheets.push(extraSheet);
-    return extraSheet;
 };
 
 const update_rule = (rule: CSSRule, style: Style) => {
@@ -127,17 +112,29 @@ interface Options {
     target?: HTMLElement | ShadowRoot;
 };
 
+const update_nonce = (style: HTMLStyleElement, nonce?: string, debug?: true) => {
+    if (nonce) {
+        // allow to use strict CSP (Content Security Policy)
+        style.nonce = nonce;
+        if (debug) {
+            style.setAttribute('nonce', nonce);
+        }
+    }
+}
+
 const inject_style = ({ nonce, debug, target = document.head }: Options) => {
-    let style = target.querySelector('style.velvet');
+    let style = target.querySelector('style.velvet') as HTMLStyleElement;
     if (target instanceof ShadowRoot) {
         if (!style) {
-            style = make_style(nonce, debug);
+            style = make_style();
+            update_nonce(style, nonce, debug);
             target.appendChild(style!);
         }
     } else if (!style) {
         if (!$style) {
-            $style = make_style(nonce, debug);
+            $style = make_style();
         }
+        update_nonce($style, nonce, debug);
         target.appendChild($style);
     }
     return (style ?? $style) as HTMLStyleElement;

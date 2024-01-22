@@ -45,6 +45,10 @@ describe('Style injection', () => {
         injections.forEach(fn => {
             fn(true);
         });
+        const $style = document.head.querySelectorAll('style');
+        $style.forEach(node => {
+            node.remove();
+        });
     });
     const test_style = (style: HTMLStyleElement, re: RegExp) => {
         const text = style.innerHTML;
