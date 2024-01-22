@@ -1,0 +1,12 @@
+name: Purge README
+on: push
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: wow-actions/purge-readme@v1
+        with:
+          repo: jcubic/velvet
+          branch: master
+          paths: |
+            README.md
