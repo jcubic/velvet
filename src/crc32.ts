@@ -1,7 +1,7 @@
 /*
  * Velvet <https://github.com/jcubic/velvet/>
  *
- * Copyright (c) 2023 Jakub T. Jankiewicz <jcubic@onet.pl>
+ * Copyright (c) 2023-2024 Jakub T. Jankiewicz <jcubic@onet.pl>
  * Released under MIT license
  */
 

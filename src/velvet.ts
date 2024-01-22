@@ -1,7 +1,7 @@
 /*
  * Velvet <https://github.com/jcubic/velvet/>
  *
- * Copyright (c) 2023 Jakub T. Jankiewicz <jcubic@onet.pl>
+ * Copyright (c) 2023-2024 Jakub T. Jankiewicz <jcubic@onet.pl>
  * Released under MIT license
  */
 import hash from './crc32';
@@ -31,9 +31,16 @@ interface StyleMapNode {
     shadow?: ShadowNode;
 };
 
-const make_style = () => {
+const make_style = (nonce?: string, debug?: boolean) => {
     const node = document.createElement('style');
     node.classList.add('velvet');
+    if (nonce) {
+        // allow to use strict CSP (Content Security Policy)
+        node.nonce = nonce;
+        if (debug) {
+            node.setAttribute('nonce', nonce);
+        }
+    }
     return node;
 };
 
@@ -121,22 +128,15 @@ interface Options {
 };
 
 const inject_style = ({ nonce, debug, target = document.head }: Options) => {
-    if (nonce) {
-        // allow to use strict CSP (Content Security Policy)
-        $style.nonce = nonce;
-        if (debug) {
-            $style.setAttribute('nonce', nonce);
-        }
-    }
     let style = target.querySelector('style.velvet');
     if (target instanceof ShadowRoot) {
         if (!style) {
-            style = make_style();
+            style = make_style(nonce, debug);
             target.appendChild(style!);
         }
     } else if (!style) {
         if (!$style) {
-            $style = make_style();
+            $style = make_style(nonce, debug);
         }
         target.appendChild($style);
     }
